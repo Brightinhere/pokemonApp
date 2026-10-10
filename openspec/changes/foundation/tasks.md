@@ -35,7 +35,7 @@
 
 ## 5. CI and integration
 
-- [ ] 5.1 Add `.github/workflows/ci.yml` (push + PR: setup-node from `.nvmrc` with npm cache, `npm ci`, lint, typecheck, test, data:check, build); verify the workflow passes on GitHub after pushing
+- [x] 5.1 Add `.github/workflows/ci.yml` (push + PR: setup-node from `.nvmrc` with npm cache, `npm ci`, lint, typecheck, test, data:check, build); verify the workflow passes on GitHub after pushing
 - [x] 5.2 Write the root `README.md` (what the project is, prerequisites, scripts, project layout, link to the OpenSpec roadmap changes); verify a fresh clone following it reaches a running dev server
 - [x] 5.3 Final integration check: from a clean clone with network disabled after `npm ci`, run lint, typecheck, test, data:check and build; verify all pass and no request to `pokeapi.co` is made
 
