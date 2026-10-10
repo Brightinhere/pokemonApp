@@ -98,9 +98,3 @@ Open `prototype/squad.html`, `prototype/index.html` or `prototype/detail.html` i
 static file server works best). `data.js` is a snapshot of `src/data` taken for the prototype.
 Known gaps, deliberately left for real implementation: filters and sorting are not wired up, and
 the form switcher and "Add" buttons don't do anything.
-
-## Known data issue found here
-
-The form classifier in `scripts/build-index/transform.ts` treats any name containing `alola` as
-regional, so `pikachu-alola-cap` and `raticate-totem-alola` show up as regional forms. Cap
-Pikachu and totem forms should be `other`. Fix this in the `pokedex` change.

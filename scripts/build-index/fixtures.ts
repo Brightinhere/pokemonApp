@@ -164,3 +164,52 @@ export const efficacy = (
   type: { id: attacker[0], name: attacker[1] },
   TypeByTargetTypeId: { id: defender[0], name: defender[1] },
 })
+
+export const pikachuAlolaCap = rawPokemon({
+  id: 10100,
+  name: 'pikachu-alola-cap',
+  speciesId: 25,
+  isDefault: false,
+  types: ['electric'],
+  formName: 'alola-cap',
+  formGeneration: 7,
+  speciesGeneration: 1,
+  speciesName: 'Pikachu',
+  formDisplayName: 'Alola Cap Pikachu',
+})
+export const raticateTotemAlola = rawPokemon({
+  id: 10093,
+  name: 'raticate-totem-alola',
+  speciesId: 20,
+  isDefault: false,
+  types: ['dark', 'normal'],
+  formName: 'totem-alola',
+  formGeneration: 7,
+  speciesGeneration: 1,
+  speciesName: 'Raticate',
+  formDisplayName: 'Totem Alolan Raticate',
+})
+export const raticateAlola = rawPokemon({
+  id: 10092,
+  name: 'raticate-alola',
+  speciesId: 20,
+  isDefault: false,
+  types: ['dark', 'normal'],
+  formName: 'alola',
+  formGeneration: 7,
+  speciesGeneration: 1,
+  speciesName: 'Raticate',
+  formDisplayName: 'Alolan Raticate',
+})
+export const taurosPaldeaCombat = rawPokemon({
+  id: 10250,
+  name: 'tauros-paldea-combat-breed',
+  speciesId: 128,
+  isDefault: false,
+  types: ['fighting'],
+  formName: 'paldea-combat-breed',
+  formGeneration: 9,
+  speciesGeneration: 1,
+  speciesName: 'Tauros',
+  formDisplayName: 'Paldean Tauros (Combat Breed)',
+})

@@ -1,17 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { makeStore } from '../app/store'
+import abilitySolarPower from '../features/pokemon-detail/fixtures/ability-solar-power.json'
+import chainCharizard from '../features/pokemon-detail/fixtures/evolution-chain-2.json'
+import pokemonCharizard from '../features/pokemon-detail/fixtures/pokemon-charizard.json'
+import formPolar from '../features/pokemon-detail/fixtures/pokemon-form-vivillon-polar.json'
+import species6 from '../features/pokemon-detail/fixtures/species-6.json'
 import { pokeApi } from './pokeApi'
 
-const species = {
-  id: 25,
-  name: 'pikachu',
-  names: [],
-  flavor_text_entries: [],
-  evolution_chain: null,
-  varieties: [],
-}
-
 const fetchMock = vi.fn<typeof fetch>()
+const requestedUrl = (call = 0) => (fetchMock.mock.calls[call]![0] as Request).url
 
 beforeEach(() => {
   fetchMock.mockReset()
@@ -21,46 +18,63 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('pokeApi', () => {
-  test('requests the species endpoint on PokeAPI', async () => {
-    fetchMock.mockResolvedValue(Response.json(species))
-    const store = makeStore()
-    const result = await store.dispatch(pokeApi.endpoints.getPokemonSpecies.initiate('pikachu'))
-    expect(result.data).toEqual(species)
-    const request = fetchMock.mock.calls[0]![0] as Request
-    expect(request.url).toBe('https://pokeapi.co/api/v2/pokemon-species/pikachu')
+describe('pokeApi endpoints', () => {
+  test('getPokemon requests by slug and shapes abilities', async () => {
+    fetchMock.mockResolvedValue(Response.json(pokemonCharizard))
+    const result = await makeStore().dispatch(pokeApi.endpoints.getPokemon.initiate('charizard'))
+    expect(requestedUrl()).toBe('https://pokeapi.co/api/v2/pokemon/charizard')
+    expect(result.data?.abilities).toEqual([
+      { name: 'blaze', isHidden: false },
+      { name: 'solar-power', isHidden: true },
+    ])
   })
 
-  test('serves a repeat request in the same session from cache', async () => {
-    fetchMock.mockResolvedValue(Response.json(species))
+  test('getPokemonSpecies requests by species id', async () => {
+    fetchMock.mockResolvedValue(Response.json(species6))
+    const result = await makeStore().dispatch(pokeApi.endpoints.getPokemonSpecies.initiate(6))
+    expect(requestedUrl()).toBe('https://pokeapi.co/api/v2/pokemon-species/6')
+    expect(result.data?.evolutionChainId).toBe(2)
+  })
+
+  test('getEvolutionChain shapes the chain into a tree', async () => {
+    fetchMock.mockResolvedValue(Response.json(chainCharizard))
+    const result = await makeStore().dispatch(pokeApi.endpoints.getEvolutionChain.initiate(2))
+    expect(requestedUrl()).toBe('https://pokeapi.co/api/v2/evolution-chain/2')
+    expect(result.data?.children[0]?.condition).toBe('Level 16')
+  })
+
+  test('getAbility and getPokemonForm', async () => {
     const store = makeStore()
+    fetchMock.mockResolvedValueOnce(Response.json(abilitySolarPower))
+    const ability = await store.dispatch(pokeApi.endpoints.getAbility.initiate('solar-power'))
+    expect(requestedUrl(0)).toBe('https://pokeapi.co/api/v2/ability/solar-power')
+    expect(ability.data?.displayName).toBe('Solar Power')
 
-    const first = store.dispatch(pokeApi.endpoints.getPokemonSpecies.initiate('pikachu'))
+    fetchMock.mockResolvedValueOnce(Response.json(formPolar))
+    const form = await store.dispatch(pokeApi.endpoints.getPokemonForm.initiate('vivillon-polar'))
+    expect(requestedUrl(1)).toBe('https://pokeapi.co/api/v2/pokemon-form/vivillon-polar')
+    expect(form.data?.displayName).toBe('Polar Pattern')
+  })
+
+  test('a repeat request in the same session is served from cache', async () => {
+    fetchMock.mockResolvedValue(Response.json(species6))
+    const store = makeStore()
+    const first = store.dispatch(pokeApi.endpoints.getPokemonSpecies.initiate(6))
     await first
-    first.unsubscribe() // no component is using it any more...
-
-    const second = await store.dispatch(pokeApi.endpoints.getPokemonSpecies.initiate('pikachu'))
-    expect(second.data).toEqual(species) // ...yet it is still cached
+    first.unsubscribe()
+    const second = await store.dispatch(pokeApi.endpoints.getPokemonSpecies.initiate(6))
+    expect(second.data?.evolutionChainId).toBe(2)
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
-  test('surfaces network failures as an error state', async () => {
-    fetchMock.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+  test('network failures and HTTP errors surface as error states', async () => {
     const store = makeStore()
-    const failed = await store.dispatch(pokeApi.endpoints.getPokemonSpecies.initiate('pikachu'))
-    expect(failed.isError).toBe(true)
+    fetchMock.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    const failed = await store.dispatch(pokeApi.endpoints.getPokemon.initiate('charizard'))
     expect(failed.error).toMatchObject({ status: 'FETCH_ERROR' })
 
-    // The store keeps working for other requests.
-    fetchMock.mockResolvedValueOnce(Response.json({ ...species, id: 1, name: 'bulbasaur' }))
-    const ok = await store.dispatch(pokeApi.endpoints.getPokemonSpecies.initiate('bulbasaur'))
-    expect(ok.isSuccess).toBe(true)
-  })
-
-  test('surfaces HTTP errors as an error state', async () => {
-    fetchMock.mockResolvedValue(new Response('Not Found', { status: 404 }))
-    const store = makeStore()
-    const result = await store.dispatch(pokeApi.endpoints.getPokemonSpecies.initiate('nope'))
-    expect(result.error).toMatchObject({ status: 404 })
+    fetchMock.mockResolvedValueOnce(new Response('Not Found', { status: 404 }))
+    const missing = await store.dispatch(pokeApi.endpoints.getPokemon.initiate('nope'))
+    expect(missing.error).toMatchObject({ status: 404 })
   })
 })

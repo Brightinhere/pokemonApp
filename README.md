@@ -4,8 +4,9 @@ A Pokémon companion tool: browse the Pokédex, look up any Pokémon, build squa
 strengths and weaknesses, and get suggestions for what to add or swap. Built with React and
 [PokeAPI](https://pokeapi.co/) as a learning project.
 
-> Status: **foundation** — scaffold, tooling, data index and app shell. Features arrive in the
-> changes listed under [Roadmap](#roadmap).
+> Status: the **Pokédex** works: browse and search every Pokémon and battle-relevant form, filter
+> by type, generation and form, sort by any stat, and open a detail page with stats, damage taken,
+> abilities, evolutions and forms. Squads come next; see [Roadmap](#roadmap).
 
 ## Prerequisites
 
@@ -45,8 +46,10 @@ src/
   data/               index.json + typechart.json (generated, committed), types, validator
   engine/             pure TypeScript logic, no React/browser APIs (see its README)
   features/           one folder per feature (pokedex, pokemon-detail, squads)
+  ui/                 shared building blocks: type chips, buttons, toggles, artwork, stat bars
   services/           RTK Query client for live PokeAPI data
-  theme/              Tailwind tokens: surfaces, text, 18 type colours, light/dark
+  theme/              Tailwind tokens: paper, panel, ink, rules, 18 type colours, light/dark
+design/               design direction (README) and the static prototype
 openspec/             specs and planned changes
 ```
 
@@ -61,9 +64,9 @@ for how the data is built and when to rebuild it.
 
 Planned as [OpenSpec](https://github.com/Fission-AI/OpenSpec) changes in `openspec/changes/`:
 
-1. `foundation` — this scaffold
-2. `type-engine` — type effectiveness for Pokémon and squads
-3. `pokedex` — list, search, filters, detail page
+1. `foundation` — scaffold, tooling, data index (done)
+2. `type-engine` — type effectiveness for Pokémon and squads (done)
+3. `pokedex` — list, search, filters, detail page (done)
 4. `squad-builder` — squads, analysis, share links
 5. `recommender` — add/swap suggestions
 6. `deploy-vps` — Docker + Caddy self-hosting

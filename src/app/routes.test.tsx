@@ -1,12 +1,23 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { renderApp } from '../test/renderApp'
+
+// Detail pages load live data; keep these routing tests offline.
+beforeEach(() => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(() => new Promise(() => {})),
+  )
+})
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 describe('routes', () => {
   test.each([
     ['/', 'Pokédex'],
-    ['/pokemon/pikachu', 'Pokémon detail'],
+    ['/pokemon/pikachu', 'Pikachu'],
     ['/squads', 'Squads'],
     ['/squads/abc', 'Squad'],
   ])('%s renders its page inside the app frame', async (path, heading) => {
@@ -16,8 +27,17 @@ describe('routes', () => {
   })
 
   test('detail page receives the :name parameter', async () => {
-    renderApp('/pokemon/pikachu')
-    expect(await screen.findByText('pikachu')).toBeInTheDocument()
+    renderApp('/pokemon/vulpix-alola')
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Alolan Vulpix' }),
+    ).toBeInTheDocument()
+  })
+
+  test('the Pokédex nav item stays current on detail pages', async () => {
+    renderApp('/pokemon/vulpix-alola')
+    await screen.findByRole('heading', { level: 1, name: 'Alolan Vulpix' })
+    expect(screen.getByRole('link', { name: 'Pokédex' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('link', { name: 'Squads' })).not.toHaveAttribute('aria-current')
   })
 
   test('squad page receives the :id parameter', async () => {

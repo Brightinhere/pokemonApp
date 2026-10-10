@@ -1,0 +1,69 @@
+{
+  "id": 66,
+  "name": "blaze",
+  "names": [
+    {
+      "name": "Großbrand",
+      "language": {
+        "name": "de",
+        "url": "https://pokeapi.co/api/v2/language/6/"
+      }
+    },
+    {
+      "name": "Blaze",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    },
+    {
+      "name": "もうか",
+      "language": {
+        "name": "ja",
+        "url": "https://pokeapi.co/api/v2/language/11/"
+      }
+    }
+  ],
+  "effect_entries": [
+    {
+      "effect": "Wenn ein Pokémon mit dieser Fähigkeit nur noch 1/3 seiner maximalen KP oder weniger hat, werden all seine Feuer Attacken verstärkt, so dass sie 1,5× so viel Regulärer Schaden anrichten wie sonst.",
+      "short_effect": "Erhöht den Schaden von Feuer Attacken um 50% wenn nur noch 1/3 der maximalen KP oder weniger übrig sind.",
+      "language": {
+        "name": "de",
+        "url": "https://pokeapi.co/api/v2/language/6/"
+      }
+    },
+    {
+      "effect": "When this Pokémon has 1/3 or less of its HP remaining, its Fire-type moves inflict 1.5× as much regular damage.",
+      "short_effect": "Strengthens Fire moves to inflict 1.5× damage at 1/3 max HP or less.",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      }
+    }
+  ],
+  "flavor_text_entries": [
+    {
+      "flavor_text": "Powers up Fire-type moves when the Pokémon's HP is low.",
+      "language": {
+        "name": "en",
+        "url": "https://pokeapi.co/api/v2/language/9/"
+      },
+      "version_group": {
+        "name": "scarlet-violet",
+        "url": "https://pokeapi.co/api/v2/version-group/25/"
+      }
+    },
+    {
+      "flavor_text": "Erhöht die Stärke von Feuer-Attacken, wenn die KP auf\neinen gewissen Wert fallen.",
+      "language": {
+        "name": "de",
+        "url": "https://pokeapi.co/api/v2/language/6/"
+      },
+      "version_group": {
+        "name": "sword-shield",
+        "url": "https://pokeapi.co/api/v2/version-group/20/"
+      }
+    }
+  ]
+}

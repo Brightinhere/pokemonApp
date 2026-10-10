@@ -28,15 +28,40 @@ describe.each(Object.entries(themes))('%s theme', (_, theme) => {
     expect(new Set(colours).size).toBe(POKEMON_TYPES.length)
   })
 
-  test('body and muted text are readable on the surface', () => {
-    expect(contrastRatio(theme['color-text']!, theme['color-surface']!)).toBeGreaterThanOrEqual(4.5)
+  test.each([
+    ['ink', 'paper'],
+    ['ink', 'panel'],
+    ['ink-soft', 'paper'],
+    ['ink-soft', 'panel'],
+  ])('%s text on %s has at least 4.5:1 contrast', (text, background) => {
     expect(
-      contrastRatio(theme['color-text-muted']!, theme['color-surface']!),
+      contrastRatio(theme[`color-${text}`]!, theme[`color-${background}`]!),
     ).toBeGreaterThanOrEqual(4.5)
+  })
+
+  test('rule-strong is visible against panel (3:1 for UI boundaries)', () => {
+    expect(
+      contrastRatio(theme['color-rule-strong']!, theme['color-panel']!),
+    ).toBeGreaterThanOrEqual(3)
   })
 })
 
 test('contrastRatio matches known WCAG values', () => {
   expect(contrastRatio('#000000', '#ffffff')).toBeCloseTo(21)
   expect(contrastRatio('#777777', '#ffffff')).toBeCloseTo(4.48, 2)
+})
+
+test('the interface has no accent colour: colour belongs to the Pokémon', () => {
+  expect(css).not.toMatch(/--color-accent/)
+  const chromeTokens = Object.keys(themes.light).filter((name) => !name.startsWith('color-type-'))
+  expect(chromeTokens.sort()).toEqual(
+    [
+      'color-ink',
+      'color-ink-soft',
+      'color-panel',
+      'color-paper',
+      'color-rule',
+      'color-rule-strong',
+    ].sort(),
+  )
 })

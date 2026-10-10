@@ -25,6 +25,16 @@ describe('toEntry', () => {
     expect(entry.isBattleOnly).toBe(battleOnly)
   })
 
+  test.each([
+    [f.pikachuAlolaCap, 'other'],
+    [f.raticateTotemAlola, 'other'],
+    [f.raticateAlola, 'regional'],
+    [f.darmanitanGalarZen, 'regional'],
+    [f.taurosPaldeaCombat, 'regional'],
+  ] as const)('totem and cap forms are not regional: %#', (raw, category) => {
+    expect(transform(raw).entry.formCategory).toBe(category)
+  })
+
   test('maps ids, types in slot order and all six stats', () => {
     const { entry } = transform(f.vulpixAlola)
     expect(entry).toMatchObject({ id: 10103, speciesId: 37, name: 'vulpix-alola', types: ['ice'] })
