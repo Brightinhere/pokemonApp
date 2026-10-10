@@ -19,7 +19,8 @@ export function PokemonArt({
   eager = false,
 }: PokemonArtProps) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null)
-  const box = { width: size, height: size }
+  // Never wider than its container: shrinks on small screens, keeping the square shape.
+  const box = { width: size, maxWidth: '100%', aspectRatio: '1 / 1', height: 'auto' }
 
   if (!src || failedSrc === src) {
     return (

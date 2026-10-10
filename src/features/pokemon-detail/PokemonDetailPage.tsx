@@ -4,6 +4,7 @@ import { retryPokemonIndex, usePokemonIndex } from '../../data/pokemonIndex'
 import type { PokemonEntry } from '../../data/types'
 import { useGetPokemonFormQuery } from '../../services/pokeApi'
 import { Button, DexNumber, PokemonArt, TypeList, formLabel } from '../../ui'
+import { AddToSquadButton } from '../squads/AddToSquadButton'
 import { FormsSwitcher } from './FormsSwitcher'
 import { Abilities, BaseStats, DamageTaken, Evolution, FlavorText } from './sections'
 
@@ -91,11 +92,11 @@ function PokemonDetail({ entry, entries }: { entry: PokemonEntry; entries: Pokem
       <title>{`${entry.displayName} | Squad Lab`}</title>
       <BackToList />
 
-      <header className="grid items-center gap-8 border-b border-rule pb-10 md:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="grid justify-items-start gap-5">
+      <header className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 border-b border-rule pb-10 md:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid min-w-0 justify-items-start gap-5">
           <div>
             <DexNumber speciesId={entry.speciesId} className="text-lg" />
-            <h1 className="text-hero font-black tracking-[-0.035em] font-stretch-expanded">
+            <h1 className="text-hero font-black tracking-[-0.035em] [overflow-wrap:anywhere] font-stretch-expanded">
               {entry.displayName}
             </h1>
             {label && (
@@ -115,13 +116,14 @@ function PokemonDetail({ entry, entries }: { entry: PokemonEntry; entries: Pokem
             cosmeticForm={cosmeticForm}
             onCosmeticForm={setCosmeticForm}
           />
+          <AddToSquadButton entry={entry} variant="detail" />
         </div>
         <PokemonArt
           src={art}
           size={360}
           eager
           alt={`${entry.displayName} artwork`}
-          className="max-md:row-start-1 max-md:size-60 md:justify-self-end"
+          className="max-md:row-start-1 max-md:w-60! md:justify-self-end"
         />
       </header>
 

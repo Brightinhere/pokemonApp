@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { Link } from 'react-router'
 import type { PokemonEntry } from '../../data/types'
 import { DexNumber, PokemonArt, StatBar, TypeList, formLabel } from '../../ui'
+import { AddToSquadButton } from '../squads/AddToSquadButton'
 import { baseStatTotal } from './listQuery'
 
 export const PokemonRow = memo(function PokemonRow({ entry }: { entry: PokemonEntry }) {
@@ -9,15 +10,11 @@ export const PokemonRow = memo(function PokemonRow({ entry }: { entry: PokemonEn
   const label = formLabel(entry)
   return (
     <li
-      className={`grid grid-cols-[48px_minmax(0,1fr)] items-center gap-x-4 gap-y-1 border-t border-rule px-4 py-2 [contain-intrinsic-size:auto_72px] [content-visibility:auto] first:border-t-0 md:grid-cols-[56px_64px_minmax(0,1fr)_200px_128px] ${
+      className={`grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 border-t border-rule px-4 py-2 [contain-intrinsic-size:auto_72px] [content-visibility:auto] first:border-t-0 md:grid-cols-[56px_64px_minmax(0,1fr)_200px_128px_auto] ${
         entry.isDefault ? '' : 'bg-paper/55'
       }`}
     >
-      <PokemonArt
-        src={entry.sprite}
-        size={56}
-        className="row-span-2 max-md:size-12 md:row-span-1"
-      />
+      <PokemonArt src={entry.sprite} size={56} className="row-span-2 max-md:w-12! md:row-span-1" />
       <DexNumber speciesId={entry.speciesId} className="hidden md:block" />
       <span className={`min-w-0 ${entry.isDefault ? '' : 'md:pl-4'}`}>
         <Link
@@ -42,6 +39,9 @@ export const PokemonRow = memo(function PokemonRow({ entry }: { entry: PokemonEn
       >
         <span>{total}</span>
         <StatBar value={total} max={720} />
+      </span>
+      <span className="col-start-3 row-span-2 row-start-1 md:col-start-auto md:row-span-1 md:row-start-auto">
+        <AddToSquadButton entry={entry} variant="row" />
       </span>
     </li>
   )
