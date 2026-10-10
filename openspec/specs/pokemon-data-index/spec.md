@@ -37,7 +37,7 @@ Each entry SHALL contain: numeric id, species id, slug name, English display nam
 - **THEN** both have `isLegendary` true
 
 ### Requirement: Form classification
-Each entry SHALL have exactly one form category: `default` (the species' default form), `regional` (Alolan, Galarian, Hisuian or Paldean forms), `mega`, `gmax`, or `other` (any remaining alternate form).
+Each entry SHALL have exactly one form category: `default` (the species' default form), `regional` (Alolan, Galarian, Hisuian or Paldean forms), `mega`, `gmax`, or `other` (any remaining alternate form). Totem forms and cap forms SHALL be `other` even when their name contains a region.
 
 #### Scenario: Categories assigned
 - **WHEN** the dataset is generated
@@ -46,6 +46,10 @@ Each entry SHALL have exactly one form category: `default` (the species' default
 #### Scenario: Battle-only flag
 - **WHEN** reading the entries for `charizard-mega-x` and `vulpix-alola`
 - **THEN** `charizard-mega-x` has `isBattleOnly` true and `vulpix-alola` has `isBattleOnly` false
+
+#### Scenario: Totem and cap forms are not regional
+- **WHEN** the dataset is generated
+- **THEN** `raticate-totem-alola` and `pikachu-alola-cap` are `other`, while `raticate-alola`, `darmanitan-galar-zen` and `tauros-paldea-combat-breed` stay `regional`
 
 ### Requirement: Generation of an entry is the generation the form was introduced
 An entry's generation SHALL be the generation in which that specific form was introduced, not the generation of its species.
