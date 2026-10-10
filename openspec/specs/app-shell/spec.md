@@ -7,7 +7,7 @@ Defines the application frame that every feature lives in: the top-level routes 
 ## Requirements
 
 ### Requirement: Top-level routes
-The app SHALL provide these client-side routes: `/` (Pokédex), `/pokemon/:name` (Pokémon detail), `/squads` (squad list) and `/squads/:id` (single squad). Until their feature changes land, each route SHALL render a placeholder page naming the feature.
+The app SHALL provide these client-side routes: `/` (Pokédex), `/pokemon/:name` (Pokémon detail), `/squads` (squad list), `/squads/:id` (single squad) and `/squad` (a shared squad, described by its query). Until their feature changes land, each route SHALL render a placeholder page naming the feature.
 
 #### Scenario: Known route renders
 - **WHEN** the user opens `/squads`
@@ -16,6 +16,10 @@ The app SHALL provide these client-side routes: `/` (Pokédex), `/pokemon/:name`
 #### Scenario: Route parameter is available
 - **WHEN** the user opens `/pokemon/pikachu`
 - **THEN** the detail page (or its placeholder) is shown and has access to the name `pikachu`
+
+#### Scenario: Shared squad route
+- **WHEN** the user opens `/squad?m=6,94`
+- **THEN** the shared squad view is shown inside the app frame
 
 ### Requirement: Deep links work on load
 Every route SHALL render correctly when opened directly or refreshed in the browser, not only when reached by in-app navigation.
