@@ -4,10 +4,11 @@ A Pokémon companion tool: browse the Pokédex, look up any Pokémon, build squa
 strengths and weaknesses, and get suggestions for what to add or swap. Built with React and
 [PokeAPI](https://pokeapi.co/) as a learning project.
 
-> Status: the **Pokédex** and **squads** work. Browse and search every Pokémon and battle-relevant
-> form, open detail pages, and build squads of up to six. Each squad gets a matchup sheet, its
-> problem types and its attack coverage, and can be shared as a link. Squads are saved in your
-> browser. Recommendations come next; see [Roadmap](#roadmap).
+> Status: the **Pokédex**, **squads** and **suggestions** work. Browse and search every Pokémon and
+> battle-relevant form, open detail pages, and build squads of up to six. Each squad gets a matchup
+> sheet, its problem types and its attack coverage, and can be shared as a link. From three members,
+> "Complete your squad" suggests type combinations that fix its weak spots. On a full squad, "Find a
+> replacement" suggests what could take a member's place. Squads are saved in your browser.
 
 ## Prerequisites
 
@@ -71,7 +72,7 @@ Planned as [OpenSpec](https://github.com/Fission-AI/OpenSpec) changes in `opensp
 2. `type-engine` — type effectiveness for Pokémon and squads (done)
 3. `pokedex` — list, search, filters, detail page (done)
 4. `squad-builder` — squads, analysis, share links (done)
-5. `recommender` — add/swap suggestions
+5. `recommender` — add/swap suggestions (done)
 6. `deploy-vps` — Docker + Caddy self-hosting
 
 Later, maybe: online battling.

@@ -8,12 +8,22 @@ interface MemberSlotsProps {
   /** Omit for read-only slots (shared squads). */
   onMove?: (index: number, direction: -1 | 1) => void
   onRemove?: (index: number) => void
+  /** Full squads only: offer "Find a replacement" per member. */
+  onFindReplacement?: (index: number) => void
+  /** The member whose replacements are open. */
+  replacingIndex?: number | null
 }
 
 const small = 'px-2.5 py-1.5 text-xs'
 
 /** Six slots: members in order, then empty ones. */
-export function MemberSlots({ members, onMove, onRemove }: MemberSlotsProps) {
+export function MemberSlots({
+  members,
+  onMove,
+  onRemove,
+  onFindReplacement,
+  replacingIndex = null,
+}: MemberSlotsProps) {
   const editable = Boolean(onMove && onRemove)
   const free = MAX_MEMBERS - members.length
   return (
@@ -49,6 +59,16 @@ export function MemberSlots({ members, onMove, onRemove }: MemberSlotsProps) {
                   onClick={() => onMove!(index, 1)}
                 >
                   Later →
+                </Button>
+              )}
+              {onFindReplacement && (
+                <Button
+                  className={small}
+                  aria-label={`Find a replacement for ${member.displayName}`}
+                  aria-pressed={replacingIndex === index}
+                  onClick={() => onFindReplacement(index)}
+                >
+                  Find a replacement
                 </Button>
               )}
               <Button
