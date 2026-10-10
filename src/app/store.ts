@@ -1,11 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { combineSlices, configureStore } from '@reduxjs/toolkit'
+import { squadsSlice, type SquadsState } from '../features/squads/squadsSlice'
 import { pokeApi } from '../services/pokeApi'
 
-export function makeStore() {
+const rootReducer = combineSlices(pokeApi, squadsSlice)
+
+export function makeStore(preloaded?: { squads?: SquadsState }) {
   return configureStore({
-    reducer: {
-      [pokeApi.reducerPath]: pokeApi.reducer,
-    },
+    reducer: rootReducer,
+    preloadedState: preloaded,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(pokeApi.middleware),
   })
 }

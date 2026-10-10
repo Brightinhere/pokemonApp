@@ -19,7 +19,8 @@ describe('routes', () => {
     ['/', 'Pokédex'],
     ['/pokemon/pikachu', 'Pikachu'],
     ['/squads', 'Squads'],
-    ['/squads/abc', 'Squad'],
+    ['/squads/abc', 'Squad not found'],
+    ['/squad?m=6,94', 'Shared squad'],
   ])('%s renders its page inside the app frame', async (path, heading) => {
     renderApp(path)
     expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument()
@@ -41,8 +42,13 @@ describe('routes', () => {
   })
 
   test('squad page receives the :id parameter', async () => {
-    renderApp('/squads/abc')
-    expect(await screen.findByText('abc')).toBeInTheDocument()
+    renderApp('/squads/k', {
+      squads: {
+        squads: [{ id: 'k', name: 'Kanto run', members: [], updatedAt: 1 }],
+        currentId: 'k',
+      },
+    })
+    expect(await screen.findByRole('heading', { level: 1, name: 'Kanto run' })).toBeInTheDocument()
   })
 
   test('unknown paths show a not-found page linking to the Pokédex', async () => {

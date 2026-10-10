@@ -72,7 +72,8 @@ describe('PokemonArt', () => {
     render(<PokemonArt src={null} size={56} />)
     const placeholder = screen.getByTestId('art-placeholder')
     expect(placeholder.style.width).toBe('56px')
-    expect(placeholder.style.height).toBe('56px')
+    expect(placeholder.style.aspectRatio).toBe('1 / 1')
+    expect(placeholder.style.maxWidth).toBe('100%')
   })
 
   test('falls back to the placeholder when the image fails to load', () => {
