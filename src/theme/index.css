@@ -1,0 +1,103 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens. Tailwind turns each --color-* into utilities (bg-surface, text-type-fire, ...).
+ * Light values live in @theme; dark values override them below when the OS prefers dark,
+ * which also switches live without a reload. Visual design comes later (frontend-design).
+ *
+ * Every --color-type-X / --color-type-X-fg pair must keep >= 4.5:1 contrast in both themes;
+ * src/theme/theme.test.ts enforces this.
+ */
+@theme static {
+  --color-surface: #fafafa;
+  --color-surface-raised: #eeeef2;
+  --color-text: #1b1b1f;
+  --color-text-muted: #55555f;
+  --color-border: #d4d4dc;
+  --color-accent: #c22e28;
+
+  --color-type-normal: #a8a77a;
+  --color-type-normal-fg: #1b1b1f;
+  --color-type-fighting: #c22e28;
+  --color-type-fighting-fg: #ffffff;
+  --color-type-flying: #a98ff3;
+  --color-type-flying-fg: #1b1b1f;
+  --color-type-poison: #a33ea1;
+  --color-type-poison-fg: #ffffff;
+  --color-type-ground: #e2bf65;
+  --color-type-ground-fg: #1b1b1f;
+  --color-type-rock: #b6a136;
+  --color-type-rock-fg: #1b1b1f;
+  --color-type-bug: #a6b91a;
+  --color-type-bug-fg: #1b1b1f;
+  --color-type-ghost: #735797;
+  --color-type-ghost-fg: #ffffff;
+  --color-type-steel: #b7b7ce;
+  --color-type-steel-fg: #1b1b1f;
+  --color-type-fire: #ee8130;
+  --color-type-fire-fg: #1b1b1f;
+  --color-type-water: #6390f0;
+  --color-type-water-fg: #1b1b1f;
+  --color-type-grass: #7ac74c;
+  --color-type-grass-fg: #1b1b1f;
+  --color-type-electric: #f7d02c;
+  --color-type-electric-fg: #1b1b1f;
+  --color-type-psychic: #f95587;
+  --color-type-psychic-fg: #1b1b1f;
+  --color-type-ice: #96d9d6;
+  --color-type-ice-fg: #1b1b1f;
+  --color-type-dragon: #6f35fc;
+  --color-type-dragon-fg: #ffffff;
+  --color-type-dark: #705746;
+  --color-type-dark-fg: #ffffff;
+  --color-type-fairy: #d685ad;
+  --color-type-fairy-fg: #1b1b1f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface: #121216;
+    --color-surface-raised: #1f1f26;
+    --color-text: #ededf2;
+    --color-text-muted: #a3a3b0;
+    --color-border: #34343e;
+    --color-accent: #f2665f;
+
+    --color-type-normal: #767555;
+    --color-type-normal-fg: #ffffff;
+    --color-type-fighting: #8c211d;
+    --color-type-fighting-fg: #ffffff;
+    --color-type-flying: #7a67af;
+    --color-type-flying-fg: #ffffff;
+    --color-type-poison: #752d74;
+    --color-type-poison-fg: #ffffff;
+    --color-type-ground: #a38a49;
+    --color-type-ground-fg: #1b1b1f;
+    --color-type-rock: #837427;
+    --color-type-rock-fg: #ffffff;
+    --color-type-bug: #6e7a11;
+    --color-type-bug-fg: #ffffff;
+    --color-type-ghost: #533f6d;
+    --color-type-ghost-fg: #ffffff;
+    --color-type-steel: #848494;
+    --color-type-steel-fg: #1b1b1f;
+    --color-type-fire: #ab5d23;
+    --color-type-fire-fg: #ffffff;
+    --color-type-water: #4768ad;
+    --color-type-water-fg: #ffffff;
+    --color-type-grass: #4e7f31;
+    --color-type-grass-fg: #ffffff;
+    --color-type-electric: #b29620;
+    --color-type-electric-fg: #1b1b1f;
+    --color-type-psychic: #b33d61;
+    --color-type-psychic-fg: #ffffff;
+    --color-type-ice: #6c9c9a;
+    --color-type-ice-fg: #1b1b1f;
+    --color-type-dragon: #5026b5;
+    --color-type-dragon-fg: #ffffff;
+    --color-type-dark: #513f32;
+    --color-type-dark-fg: #ffffff;
+    --color-type-fairy: #9a607d;
+    --color-type-fairy-fg: #ffffff;
+  }
+}
