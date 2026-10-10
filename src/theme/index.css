@@ -1,20 +1,24 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens. Tailwind turns each --color-* into utilities (bg-surface, text-type-fire, ...).
- * Light values live in @theme; dark values override them below when the OS prefers dark,
- * which also switches live without a reload. Visual design comes later (frontend-design).
+ * Design tokens (see design/README.md). Tailwind turns each token into utilities:
+ * bg-paper, text-ink, border-rule, bg-type-fire, text-lg, rounded-chip, ...
  *
- * Every --color-type-X / --color-type-X-fg pair must keep >= 4.5:1 contrast in both themes;
- * src/theme/theme.test.ts enforces this.
+ * Colour belongs to the Pokémon: the interface itself only uses the neutral paper/panel/ink/rule
+ * tokens, and the 18 type colours are the only chromatic colour. Light values live in @theme; the
+ * dark values below override them when the OS prefers dark, switching live without a reload.
+ *
+ * src/theme/theme.test.ts enforces contrast for every text/background pair defined here.
  */
 @theme static {
-  --color-surface: #fafafa;
-  --color-surface-raised: #eeeef2;
-  --color-text: #1b1b1f;
-  --color-text-muted: #55555f;
-  --color-border: #d4d4dc;
-  --color-accent: #c22e28;
+  --color-*: initial;
+
+  --color-paper: #eef1f4;
+  --color-panel: #ffffff;
+  --color-ink: #18202e;
+  --color-ink-soft: #4a5568;
+  --color-rule: #c9d0d9;
+  --color-rule-strong: #808996;
 
   --color-type-normal: #a8a77a;
   --color-type-normal-fg: #1b1b1f;
@@ -52,16 +56,36 @@
   --color-type-dark-fg: #ffffff;
   --color-type-fairy: #d685ad;
   --color-type-fairy-fg: #1b1b1f;
+
+  --font-sans: 'Archivo Variable', system-ui, sans-serif;
+
+  --text-xs: 12px;
+  --text-xs--line-height: 1.4;
+  --text-sm: 14px;
+  --text-sm--line-height: 1.45;
+  --text-base: 16px;
+  --text-base--line-height: 1.5;
+  --text-lg: 21px;
+  --text-lg--line-height: 1.25;
+  --text-xl: 28px;
+  --text-xl--line-height: 1.15;
+  --text-2xl: 36px;
+  --text-2xl--line-height: 1.1;
+  --text-hero: clamp(44px, 9vw, 104px);
+  --text-hero--line-height: 0.92;
+
+  --radius-chip: 3px;
+  --radius-panel: 6px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-surface: #121216;
-    --color-surface-raised: #1f1f26;
-    --color-text: #ededf2;
-    --color-text-muted: #a3a3b0;
-    --color-border: #34343e;
-    --color-accent: #f2665f;
+    --color-paper: #121722;
+    --color-panel: #1a2130;
+    --color-ink: #e6eaf0;
+    --color-ink-soft: #9aa5b5;
+    --color-rule: #2c3546;
+    --color-rule-strong: #646e80;
 
     --color-type-normal: #767555;
     --color-type-normal-fg: #ffffff;
@@ -99,5 +123,23 @@
     --color-type-dark-fg: #ffffff;
     --color-type-fairy: #9a607d;
     --color-type-fairy-fg: #ffffff;
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
   }
 }

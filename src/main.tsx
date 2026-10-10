@@ -5,6 +5,7 @@ import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { routes } from './app/routes'
 import { makeStore } from './app/store'
+import '@fontsource-variable/archivo/standard.css'
 import './theme/index.css'
 
 const store = makeStore()

@@ -11,6 +11,8 @@ import { SPRITE_URL_PREFIX } from '../../src/data/validate'
 import type { RawPokemon, RawSprites, RawTypeEfficacy } from './queries'
 
 const REGIONAL_TOKENS = ['alola', 'galar', 'hisui', 'paldea']
+/** Totem and cap forms can carry a region in their slug (`pikachu-alola-cap`) but aren't regional. */
+const NON_REGIONAL_TOKENS = ['totem', 'cap']
 
 const STAT_NAMES: Record<string, keyof BaseStats> = {
   hp: 'hp',
@@ -31,7 +33,9 @@ export function classifyForm(raw: RawPokemon): FormCategory {
   if (raw.is_default) return 'default'
   if (form?.is_mega) return 'mega'
   if (form && (form.form_name === 'gmax' || form.form_name.endsWith('-gmax'))) return 'gmax'
-  if (raw.name.split('-').some((token) => REGIONAL_TOKENS.includes(token))) return 'regional'
+  const tokens = raw.name.split('-')
+  if (tokens.some((token) => NON_REGIONAL_TOKENS.includes(token))) return 'other'
+  if (tokens.some((token) => REGIONAL_TOKENS.includes(token))) return 'regional'
   return 'other'
 }
 

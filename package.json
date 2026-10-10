@@ -20,6 +20,7 @@
     "data:check": "tsx scripts/build-index/check.ts"
   },
   "dependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
     "@reduxjs/toolkit": "^2.13.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

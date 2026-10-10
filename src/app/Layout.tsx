@@ -1,23 +1,37 @@
-import { NavLink, Outlet } from 'react-router'
+import { Link, NavLink, Outlet, useLocation } from 'react-router'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `rounded px-3 py-2 ${isActive ? 'bg-surface-raised font-semibold' : 'hover:bg-surface-raised'}`
+  `px-3 py-2 ${isActive ? 'font-bold text-ink shadow-[inset_0_-3px_0_var(--color-ink)]' : 'text-ink-soft hover:text-ink'}`
 
 export function Layout() {
+  // Detail pages belong to the Pokédex, so its nav item stays current there.
+  const { pathname } = useLocation()
+  const inPokedex = pathname === '/' || pathname.startsWith('/pokemon/')
   return (
-    <div className="min-h-dvh bg-surface text-text">
-      <header className="border-b border-border">
-        <nav aria-label="Main" className="mx-auto flex max-w-5xl items-center gap-2 p-3">
-          <span className="mr-4 font-bold">Pokémon Squad Lab</span>
-          <NavLink to="/" end className={navLinkClass}>
-            Pokédex
-          </NavLink>
-          <NavLink to="/squads" className={navLinkClass}>
-            Squads
-          </NavLink>
+    <div className="min-h-dvh">
+      <header className="border-b border-rule bg-panel">
+        <nav
+          aria-label="Main"
+          className="mx-auto flex h-16 max-w-[1200px] items-center gap-4 px-4 sm:gap-8 sm:px-6"
+        >
+          <span className="whitespace-nowrap text-lg font-extrabold font-stretch-expanded tracking-tight">
+            Squad Lab
+          </span>
+          <div className="flex gap-1 self-stretch">
+            <Link
+              to="/"
+              aria-current={inPokedex ? 'page' : undefined}
+              className={`${navLinkClass({ isActive: inPokedex })} flex items-center`}
+            >
+              Pokédex
+            </Link>
+            <NavLink to="/squads" className={(state) => `${navLinkClass(state)} flex items-center`}>
+              Squads
+            </NavLink>
+          </div>
         </nav>
       </header>
-      <main className="mx-auto max-w-5xl p-4">
+      <main className="mx-auto max-w-[1200px] px-4 pt-6 pb-16 sm:px-6 sm:pt-8">
         <Outlet />
       </main>
     </div>
