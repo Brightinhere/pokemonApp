@@ -4,3 +4,4 @@ src/data/*.json
 openspec
 .claude
 package-lock.json
+design/prototype/data.js

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="types.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <title>Squad Lab prototype: Pokédex</title>
+  </head>
+  <body>
+    <div id="bar"></div>
+    <main class="page">
+      <div class="dex">
+        <aside class="rail" aria-label="Filters">
+          <h1 class="page-title">Pokédex</h1>
+          <details class="filters" id="filters" open>
+            <summary class="filters__toggle">Filters</summary>
+            <div class="filters__body">
+              <label class="field">
+                <span class="field__label">Search</span>
+                <input class="input" type="search" placeholder="Name or number" />
+              </label>
+              <fieldset class="field" style="border: 0; padding: 0; margin: 0">
+                <legend class="field__label" style="margin-bottom: 6px">Types</legend>
+                <div class="toggle-list" id="type-filters"></div>
+              </fieldset>
+              <label class="field">
+                <span class="field__label">Up to generation</span>
+                <select class="select">
+                  <option>All (1–9)</option>
+                  <option>1</option>
+                  <option>2</option>
+                </select>
+              </label>
+              <fieldset class="field" style="border: 0; padding: 0; margin: 0">
+                <legend class="field__label" style="margin-bottom: 6px">Show forms</legend>
+                <div class="toggle-list">
+                  <button class="toggle" aria-pressed="true">Regional</button>
+                  <button class="toggle" aria-pressed="true">Mega</button>
+                  <button class="toggle" aria-pressed="true">Gigantamax</button>
+                </div>
+              </fieldset>
+              <fieldset class="field" style="border: 0; padding: 0; margin: 0">
+                <legend class="field__label" style="margin-bottom: 6px">
+                  Legendary and mythical
+                </legend>
+                <div class="toggle-list">
+                  <button class="toggle" aria-pressed="true">Include</button>
+                </div>
+              </fieldset>
+            </div>
+          </details>
+        </aside>
+        <section aria-labelledby="results">
+          <div class="list-head">
+            <p id="results" class="muted" style="margin: 0"></p>
+            <label class="field">
+              <span class="field__label">Sort by</span>
+              <select class="select">
+                <option>Number</option>
+                <option>Name</option>
+                <option>Total stats</option>
+                <option>Speed</option>
+              </select>
+            </label>
+          </div>
+          <ol class="roll" id="roll"></ol>
+        </section>
+      </div>
+    </main>
+    <script>
+      document.getElementById('bar').innerHTML = appBar('dex')
+      if (matchMedia('(max-width: 960px)').matches) document.getElementById('filters').open = false
+      document.getElementById('type-filters').innerHTML = TYPES.map(
+        (t) =>
+          `<button class="toggle type" aria-pressed="false" style="--chip-bg: var(--color-type-${t}); --chip-fg: var(--color-type-${t}-fg)">${cap(t)}</button>`,
+      ).join('')
+      const list = window.DEX.list
+      document.getElementById('results').textContent =
+        `Showing ${list.length} of 1,351 Pokémon and forms`
+      document.getElementById('roll').innerHTML = list
+        .map((e) => {
+          const total = bst(e.stats)
+          const isForm = !e.isDefault
+          return `<li class="row${isForm ? ' row--form' : ''}">
+    <img class="row__art" src="${e.sprite}" alt="" width="56" height="56" loading="lazy">
+    <span class="row__num">${dexNo(e.speciesId)}</span>
+    <a class="row__name" href="detail.html">${esc(e.displayName)}${isForm ? `<span class="row__badge">${formBadge(e)}</span>` : ''}</a>
+    <span class="row__meta">
+      <span class="types">${e.types.map((t) => typeChip(t)).join('')}</span>
+      <span class="bst" title="Total base stats"><span>${total}</span><span class="bar"><span style="width:${Math.round((total / 720) * 100)}%"></span></span></span>
+    </span>
+    <button class="button" aria-label="Add ${esc(e.displayName)} to squad">Add</button>
+  </li>`
+        })
+        .join('')
+    </script>
+  </body>
+</html>
