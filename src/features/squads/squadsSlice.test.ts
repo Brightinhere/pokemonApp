@@ -9,6 +9,7 @@ import {
   pruneMembers,
   removeMember,
   renameSquad,
+  replaceMember,
   saveSharedSquad,
   selectCurrentSquad,
   setCurrentSquad,
@@ -109,6 +110,20 @@ describe('squads slice', () => {
     expect(reduce(base, move(0, 1)).squads[0]!.members).toEqual([130, 6, 94])
     expect(reduce(base, move(0, -1)).squads[0]!.members).toEqual([6, 130, 94])
     expect(reduce(base, move(2, 1)).squads[0]!.members).toEqual([6, 130, 94])
+  })
+
+  test('replaceMember keeps the position and the other members', () => {
+    const replace = (index: number) => ({
+      type: replaceMember.type,
+      payload: { squadId: 'a', index, entryId: 983, at: 40 },
+    })
+    const base = run(create('a', 1), add(6, 2), add(3, 3), add(94, 4))
+    expect(reduce(base, replace(1)).squads[0]).toMatchObject({
+      members: [6, 983, 94],
+      updatedAt: 40,
+    })
+    expect(reduce(base, replace(3)).squads[0]).toMatchObject({ members: [6, 3, 94], updatedAt: 4 })
+    expect(reduce(base, replace(-1)).squads[0]!.members).toEqual([6, 3, 94])
   })
 
   test('saveSharedSquad creates a current squad, capped at 6, with a fallback name', () => {

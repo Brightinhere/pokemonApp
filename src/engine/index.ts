@@ -12,3 +12,11 @@ export {
   type TypeEngine,
   type TypeMultiplier,
 } from './typeEffectiveness'
+export {
+  SCORE_WEIGHTS,
+  recommend,
+  scoreSquad,
+  type RecommendInput,
+  type Suggestion,
+  type SuggestionReasons,
+} from './recommend'

@@ -56,3 +56,25 @@ test('a squad page has no horizontal scroll at phone width', async ({ page }) =>
   )
   expect(overflow).toBe(0)
 })
+
+test('suggestions: add a suggested Pokémon, then find a replacement on the full squad', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 })
+  for (const name of ['Charizard', 'Gyarados', 'Dragonite', 'Venusaur', 'Gengar']) {
+    await page.goto(`/?q=${name.toLowerCase()}`)
+    await page.getByRole('button', { name: new RegExp(`^Add ${name} to`) }).click()
+  }
+  await page.getByRole('link', { name: /^Current squad/ }).click()
+
+  const complete = page.getByRole('heading', { name: 'Complete your squad' })
+  await expect(complete).toBeVisible()
+  await page.getByRole('button', { name: 'Add Kingambit to Squad 1' }).click()
+  await expect(complete).toBeHidden()
+
+  await page.getByRole('button', { name: 'Find a replacement for Venusaur' }).click()
+  await expect(page.getByRole('heading', { name: 'Replacements for Venusaur' })).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBe(
+    0,
+  )
+})

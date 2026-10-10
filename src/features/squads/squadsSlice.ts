@@ -120,6 +120,20 @@ export const squadsSlice = createSlice({
       prepare: (payload: { squadId: string; index: number; direction: -1 | 1 }) => stamp(payload),
     },
 
+    /** Swaps a member for another entry, keeping its position. */
+    replaceMember: {
+      reducer(
+        state,
+        { payload }: PayloadAction<{ squadId: string; index: number; entryId: number; at: number }>,
+      ) {
+        const squad = find(state, payload.squadId)
+        if (!squad || payload.index < 0 || payload.index >= squad.members.length) return
+        squad.members[payload.index] = payload.entryId
+        squad.updatedAt = payload.at
+      },
+      prepare: (payload: { squadId: string; index: number; entryId: number }) => stamp(payload),
+    },
+
     /** "Save as my squad" from a share link. */
     saveSharedSquad: {
       reducer(
@@ -160,6 +174,7 @@ export const {
   addMember,
   removeMember,
   moveMember,
+  replaceMember,
   saveSharedSquad,
   pruneMembers,
 } = squadsSlice.actions

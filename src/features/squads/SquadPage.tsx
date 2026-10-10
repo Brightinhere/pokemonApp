@@ -6,7 +6,8 @@ import { Button } from '../../ui'
 import { CopyShareLink } from './CopyShareLink'
 import { MemberSlots } from './MemberSlots'
 import { SquadAnalysis } from './SquadAnalysis'
-import { MAX_NAME_LENGTH, normalizeName } from './squadRules'
+import { CompleteYourSquad, ReplacementPanel } from './Suggestions'
+import { MAX_MEMBERS, MAX_NAME_LENGTH, normalizeName } from './squadRules'
 import {
   deleteSquad,
   moveMember,
@@ -138,8 +139,12 @@ function DeleteSquad({ squad }: { squad: Squad }) {
   )
 }
 
+/** Suggestions start once the player has picked this many members (their first picks are their own). */
+const SUGGEST_FROM = 3
+
 function SquadView({ squad }: { squad: Squad }) {
   const dispatch = useAppDispatch()
+  const [replacingIndex, setReplacingIndex] = useState<number | null>(null)
   const index = usePokemonIndex()
   const lookup = useEntryLookup()
 
@@ -162,6 +167,10 @@ function SquadView({ squad }: { squad: Squad }) {
   }
 
   const members = lookup.membersOf(squad.members)
+  const full = members.length >= MAX_MEMBERS
+  // Replacements only exist for full squads, and only for a member that is still there.
+  const replacing =
+    full && replacingIndex !== null && replacingIndex < members.length ? replacingIndex : null
   return (
     <article>
       <title>{`${squad.name} | Squad Lab`}</title>
@@ -175,10 +184,29 @@ function SquadView({ squad }: { squad: Squad }) {
       <MemberSlots
         members={members}
         onMove={(i, direction) => dispatch(moveMember({ squadId: squad.id, index: i, direction }))}
-        onRemove={(i) => dispatch(removeMember({ squadId: squad.id, index: i }))}
+        onRemove={(i) => {
+          setReplacingIndex(null)
+          dispatch(removeMember({ squadId: squad.id, index: i }))
+        }}
+        onFindReplacement={
+          full ? (i) => setReplacingIndex((open) => (open === i ? null : i)) : undefined
+        }
+        replacingIndex={replacing}
       />
+      {replacing !== null && (
+        <ReplacementPanel
+          key={replacing}
+          squad={squad}
+          members={members}
+          index={replacing}
+          onClose={() => setReplacingIndex(null)}
+        />
+      )}
       <SquadWarnings members={members} speciesName={lookup.speciesName} />
       <SquadAnalysis members={members} />
+      {members.length >= SUGGEST_FROM && !full && (
+        <CompleteYourSquad squad={squad} members={members} />
+      )}
     </article>
   )
 }
