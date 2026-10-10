@@ -63,4 +63,24 @@ export default defineConfig([
       ],
     },
   },
+  {
+    // Engine tests may also read the committed chart; tests never ship with the engine.
+    files: ['src/engine/**/*.test.ts'],
+    rules: {
+      'import-x/no-restricted-paths': [
+        'error',
+        {
+          zones: [
+            {
+              target: './src/engine',
+              from: './src',
+              except: ['./engine', './data/types.ts', './data/typechart.json'],
+              message:
+                'Engine tests may only import from the engine, src/data/types.ts and src/data/typechart.json.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ])
