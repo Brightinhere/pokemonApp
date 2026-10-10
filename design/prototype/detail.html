@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="types.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <title>Squad Lab prototype: Charizard</title>
+  </head>
+  <body>
+    <div id="bar"></div>
+    <main class="page">
+      <a class="back" href="index.html">Back to the Pokédex</a>
+      <section class="hero">
+        <div>
+          <p class="hero__num">#0006</p>
+          <h1 class="hero__name">Charizard</h1>
+          <div class="types" id="hero-types"></div>
+          <p class="hero__flavor">
+            Spits fire that is hot enough to melt boulders. Known to cause forest fires
+            unintentionally.
+          </p>
+          <nav class="forms" aria-label="Forms" id="forms"></nav>
+          <div style="display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap">
+            <button class="button button--primary">Add to Kanto run</button>
+          </div>
+        </div>
+        <img
+          class="hero__art"
+          id="hero-art"
+          alt="Charizard official artwork"
+          width="360"
+          height="360"
+        />
+      </section>
+
+      <div class="detail-grid">
+        <section aria-labelledby="stats-title">
+          <h2 class="section-title" id="stats-title">Base stats</h2>
+          <dl class="stats" id="stats"></dl>
+        </section>
+
+        <section aria-labelledby="damage-title">
+          <h2 class="section-title" id="damage-title">Damage taken</h2>
+          <dl class="damage" id="damage"></dl>
+        </section>
+
+        <section aria-labelledby="abilities-title">
+          <h2 class="section-title" id="abilities-title">Abilities</h2>
+          <ul class="abilities">
+            <li>
+              <strong>Blaze</strong>
+              <p>Powers up Fire-type moves when the Pokémon's HP is low.</p>
+            </li>
+            <li>
+              <strong>Solar Power</strong> <span class="muted">(hidden ability)</span>
+              <p>In harsh sunlight, boosts Special Attack but loses HP every turn.</p>
+            </li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="evo-title">
+          <h2 class="section-title" id="evo-title">Evolution</h2>
+          <ol class="evo" id="evo"></ol>
+        </section>
+      </div>
+    </main>
+    <script>
+      document.getElementById('bar').innerHTML = appBar('dex')
+      const p = window.DEX.charizard
+      document.getElementById('hero-types').innerHTML = p.types
+        .map((t) => typeChip(t, 'type--lg'))
+        .join('')
+      document.getElementById('hero-art').src = p.sprite
+      document.getElementById('forms').innerHTML = window.DEX.charizardForms
+        .map(
+          (f, i) =>
+            `<a class="toggle" href="detail.html" ${i === 0 ? 'aria-current="page" aria-pressed="true"' : 'aria-pressed="false"'} style="text-decoration:none">${i === 0 ? 'Charizard' : esc(f.displayName.replace('Charizard', '').trim())}</a>`,
+        )
+        .join('')
+
+      const labels = [
+        ['hp', 'HP'],
+        ['attack', 'Attack'],
+        ['defense', 'Defense'],
+        ['specialAttack', 'Sp. Attack'],
+        ['specialDefense', 'Sp. Defense'],
+        ['speed', 'Speed'],
+      ]
+      document.getElementById('stats').innerHTML =
+        labels
+          .map(
+            ([k, label]) =>
+              `<dt>${label}</dt><dd>${p.stats[k]}</dd><span class="bar" aria-hidden="true"><span style="width:${Math.round((p.stats[k] / 255) * 100)}%"></span></span>`,
+          )
+          .join('') + `<dt class="total">Total</dt><dd>${bst(p.stats)}</dd><span></span>`
+
+      const groups = [
+        [4, '4×'],
+        [2, '2×'],
+        [0.5, '½×'],
+        [0.25, '¼×'],
+        [0, '0×'],
+      ]
+      document.getElementById('damage').innerHTML = groups
+        .map(([m, label]) => {
+          const ts = TYPES.filter((t) => multiplier(t, p.types) === m)
+          if (!ts.length) return ''
+          return `<div class="damage__row"><dt>${label}</dt><dd class="types">${ts.map((t) => typeChip(t)).join('')}</dd></div>`
+        })
+        .join('')
+
+      document.getElementById('evo').innerHTML = window.DEX.evo
+        .map(
+          (e, i) =>
+            (i ? '<li aria-hidden="true" class="muted">→</li>' : '') +
+            `<li><a href="detail.html" ${e.name === 'charizard' ? 'aria-current="page"' : ''}>
+    <img src="${e.sprite}" alt="" width="88" height="88">
+    <span class="evo__name">${esc(e.displayName)}</span>
+    <span class="evo__step">${['Base', 'Level 16', 'Level 36'][i]}</span>
+  </a></li>`,
+        )
+        .join('')
+    </script>
+  </body>
+</html>

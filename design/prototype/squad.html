@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="types.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <title>Squad Lab prototype: Kanto run</title>
+  </head>
+  <body>
+    <div id="bar"></div>
+    <main class="page">
+      <div class="squad-head">
+        <h1 class="page-title">Kanto run</h1>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <button class="button">Rename</button>
+          <button class="button button--primary">Copy share link</button>
+        </div>
+      </div>
+
+      <ol class="members" id="members" aria-label="Members"></ol>
+
+      <section aria-labelledby="sheet-title">
+        <div class="verdict" id="verdict"></div>
+        <h2 class="visually-hidden" id="sheet-title">Damage taken by attacking type</h2>
+        <div class="sheet-wrap">
+          <table class="sheet" id="sheet"></table>
+        </div>
+        <ul class="legend" id="legend" aria-label="Legend"></ul>
+      </section>
+
+      <section class="coverage" aria-labelledby="coverage-title">
+        <div>
+          <h2 class="section-title" id="coverage-title">Attack coverage</h2>
+          <p>Types this squad hits super-effectively with its own types:</p>
+          <div class="types" id="covered"></div>
+        </div>
+        <div>
+          <h2 class="section-title">Not covered</h2>
+          <p>
+            No member's own type hits these super-effectively. A member of a type that does would
+            close the gap.
+          </p>
+          <div class="types" id="uncovered"></div>
+        </div>
+      </section>
+    </main>
+    <script>
+      document.getElementById('bar').innerHTML = appBar('squad')
+      const squad = window.DEX.squad
+
+      document.getElementById('members').innerHTML =
+        squad
+          .map(
+            (p) => `
+  <li class="member">
+    <img src="${p.sprite}" alt="" width="96" height="96">
+    <a class="member__name" href="detail.html">${esc(p.displayName)}</a>
+    <span class="types">${p.types.map((t) => typeChip(t)).join('')}</span>
+  </li>`,
+          )
+          .join('') +
+        `
+  <li class="member member--empty">
+    <span>One slot left</span>
+    <a class="button" href="index.html">Add a Pokémon</a>
+  </li>`
+
+      const rows = TYPES.map((attack) => {
+        const ms = squad.map((p) => multiplier(attack, p.types))
+        const weak = ms.filter((m) => m > 1).length
+        const resist = ms.filter((m) => m < 1).length
+        return { attack, ms, weak, resist, problem: weak >= 3 && resist === 0 }
+      })
+      const problems = rows.filter((r) => r.problem)
+
+      const resisters = (attack) => TYPES.filter((t) => chart[attack][t] < 1)
+      document.getElementById('verdict').innerHTML = problems.length
+        ? problems
+            .map(
+              (
+                r,
+              ) => `<h2 class="verdict__title">${cap(r.attack)} hits ${r.weak} of your Pokémon super-effectively, and none of them resist it.</h2>
+     <p>Add or swap in a Pokémon with one of these types to take the hit: ${resisters(r.attack)
+       .map((t) => typeChip(t))
+       .join(' ')}</p>`,
+            )
+            .join('')
+        : `<h2 class="verdict__title">No problem types.</h2><p>Every attacking type is resisted by a member, or hits fewer than three of them.</p>`
+
+      document.getElementById('sheet').innerHTML = `
+  <thead><tr>
+    <th scope="col">Attacking type</th>
+    ${squad.map((p) => `<th scope="col"><img src="${p.sprite}" alt="" width="40" height="40">${esc(p.displayName)}</th>`).join('')}
+    <th scope="col" class="col-gap">Weak</th>
+    <th scope="col">Resist</th>
+  </tr></thead>
+  <tbody>${rows
+    .map(
+      (r, i) => `
+    <tr class="${r.problem ? 'is-problem' : ''}" style="--row:${i}">
+      <th scope="row">${typeChip(r.attack)}${r.problem ? '<span class="visually-hidden"> (problem type)</span>' : ''}</th>
+      ${r.ms.map((m) => `<td>${mark(m)}</td>`).join('')}
+      <td class="count count--weak col-gap ${r.weak ? '' : 'count--zero'}">${r.weak}</td>
+      <td class="count ${r.resist ? '' : 'count--zero'}">${r.resist}</td>
+    </tr>`,
+    )
+    .join('')}
+  </tbody>`
+
+      document.getElementById('legend').innerHTML = [
+        [4, 'Takes 4×'],
+        [2, 'Takes 2×'],
+        [1, 'Normal damage'],
+        [0.5, 'Takes ½×'],
+        [0.25, 'Takes ¼×'],
+        [0, 'Immune'],
+      ]
+        .map(([m, label]) => `<li>${mark(m)} ${label}</li>`)
+        .join('')
+
+      const own = [...new Set(squad.flatMap((p) => p.types))]
+      const covered = TYPES.filter((d) => own.some((a) => chart[a][d] > 1))
+      document.getElementById('covered').innerHTML = covered.map((t) => typeChip(t)).join('')
+      document.getElementById('uncovered').innerHTML = TYPES.filter((t) => !covered.includes(t))
+        .map((t) => typeChip(t))
+        .join('')
+    </script>
+  </body>
+</html>
