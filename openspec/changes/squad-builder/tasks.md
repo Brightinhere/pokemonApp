@@ -28,7 +28,7 @@
 ## 5. End-to-end and integration
 
 - [x] 5.1 Add Playwright (config, `e2e/` with PokeAPI mocked, `npm run e2e`, Vitest excluding `e2e/`) and the smoke flow from design D10, plus reload persistence and the 390px no-horizontal-scroll check; verify `npm run e2e` passes locally
-- [ ] 5.2 Add the e2e job steps to CI (browser install with cache, `npm run e2e`); verify the workflow passes on the PR
+- [x] 5.2 Add the e2e job steps to CI (browser install with cache, `npm run e2e`); verify the workflow passes on the PR
 - [x] 5.3 Browser check with `playwright-cli` at 1280px and 390px, light and dark, against `design/prototype/squad.html`; fix visual mismatches and note the results in the PR
   - Checked 2026-10-10 against `npm run preview` (1280px and 390px, light and dark), with the prototype's example squad: the squad page, shared view, squad list and Pokédex rows match `design/prototype/`; no console errors.
   - Fixes made during the check:
