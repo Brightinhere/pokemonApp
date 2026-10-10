@@ -1,7 +1,9 @@
 name: CI
 
 on:
+  # Branch pushes are covered by their pull request; only re-check main after a merge.
   push:
+    branches: [main]
   pull_request:
 
 jobs:
