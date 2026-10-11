@@ -74,7 +74,7 @@ Planned as [OpenSpec](https://github.com/Fission-AI/OpenSpec) changes in `opensp
 3. `pokedex` — list, search, filters, detail page (done)
 4. `squad-builder` — squads, analysis, share links (done)
 5. `recommender` — add/swap suggestions (done)
-6. `squad-defense-summary` — defense coverage and score breakdown (in progress)
+6. `squad-defense-summary` — defense coverage and score breakdown (done)
 7. `suggestion-type-filter` — steer suggestions by type
 8. `deploy-vps` — Docker + Caddy self-hosting
 
