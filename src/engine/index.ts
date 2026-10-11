@@ -15,8 +15,10 @@ export {
 export {
   SCORE_WEIGHTS,
   recommend,
+  scoreParts,
   scoreSquad,
   type RecommendInput,
+  type ScoreParts,
   type Suggestion,
   type SuggestionReasons,
 } from './recommend'

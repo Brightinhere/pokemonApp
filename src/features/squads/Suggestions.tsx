@@ -7,7 +7,7 @@ import { typeEngine } from '../../data/typeEngine'
 import type { PokemonEntry } from '../../data/types'
 import { recommend, type Suggestion } from '../../engine'
 import { Button, PokemonArt, Toggle, TypeChip, capitalize } from '../../ui'
-import { effectLabel, reasonSentences } from './suggestionText'
+import { breakdownText, effectLabel, reasonSentences } from './suggestionText'
 import { MAX_GENERATION, filterPool, type RecommendOptions } from './recommendOptions'
 import { addMember, replaceMember, type Squad } from './squadsSlice'
 import { useRecommendOptions } from './useRecommendOptions'
@@ -64,6 +64,9 @@ export function SuggestionCard({ suggestion, squad, replacing }: CardProps) {
           </span>
         )}
       </div>
+      <p className="text-xs font-semibold tracking-wide text-ink-soft tabular-nums">
+        {breakdownText(suggestion.breakdown)}
+      </p>
       <ul className="grid gap-1 text-sm text-ink-soft">
         {reasonSentences(suggestion, Boolean(replacing)).map((sentence) => (
           <li key={sentence}>{sentence}</li>

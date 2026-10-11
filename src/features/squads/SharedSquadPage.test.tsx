@@ -19,6 +19,9 @@ describe('shared squad view', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Kanto run' })).toBeInTheDocument()
     expect(memberNames()).toEqual(['Charizard', 'Gyarados', 'Dragonite', 'Venusaur', 'Gengar'])
     expect(screen.getByRole('table')).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Covered types' })).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Resisted types' })).toBeInTheDocument()
+    expect(screen.getByRole('list', { name: 'Not resisted types' })).toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /Remove|Move|Rename|Delete/ }),
     ).not.toBeInTheDocument()
