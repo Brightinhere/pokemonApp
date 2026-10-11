@@ -6,9 +6,10 @@ strengths and weaknesses, and get suggestions for what to add or swap. Built wit
 
 > Status: the **Pokédex**, **squads** and **suggestions** work. Browse and search every Pokémon and
 > battle-relevant form, open detail pages, and build squads of up to six. Each squad gets a matchup
-> sheet, its problem types and its attack coverage, and can be shared as a link. From three members,
-> "Complete your squad" suggests type combinations that fix its weak spots. On a full squad, "Find a
-> replacement" suggests what could take a member's place. Squads are saved in your browser.
+> sheet, its problem types, and its attack and defense coverage, and can be shared as a link. From
+> three members, "Complete your squad" suggests type combinations that fix its weak spots. On a full
+> squad, "Find a replacement" suggests what could take a member's place. Each suggestion shows how
+> much of its gain is defense and how much is attack. Squads are saved in your browser.
 
 ## Prerequisites
 
@@ -73,6 +74,8 @@ Planned as [OpenSpec](https://github.com/Fission-AI/OpenSpec) changes in `opensp
 3. `pokedex` — list, search, filters, detail page (done)
 4. `squad-builder` — squads, analysis, share links (done)
 5. `recommender` — add/swap suggestions (done)
-6. `deploy-vps` — Docker + Caddy self-hosting
+6. `squad-defense-summary` — defense coverage and score breakdown (done)
+7. `suggestion-type-filter` — steer suggestions by type
+8. `deploy-vps` — Docker + Caddy self-hosting
 
 Later, maybe: online battling.

@@ -23,6 +23,14 @@ describe('recommendations on real data (spec scenarios)', () => {
     }
   })
 
+  test('breakdown on the example five: Dark/Steel is all defense, Fairy/Steel adds attack', () => {
+    const suggestions = recommend(typeEngine, { members: kantoFive, pool: defaultPool })
+    const find = (key: string) => suggestions.find((s) => s.types.join('/') === key)!
+    expect(find('steel/dark').breakdown).toEqual({ defense: 19, attack: 0 })
+    expect(find('steel/fairy').breakdown).toEqual({ defense: 18, attack: 1 })
+    expect(find('steel/fairy').gain).toBe(find('steel/dark').gain)
+  })
+
   test('three members: Ground/Steel first', () => {
     const [first] = recommend(typeEngine, {
       members: squad('charizard', 'gyarados', 'venusaur'),

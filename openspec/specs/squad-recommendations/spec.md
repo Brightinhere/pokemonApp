@@ -37,7 +37,7 @@ Candidates SHALL be index entries matching the squad page's options: up to a cho
 - **THEN** only entries introduced in generations 1–4 appear, and the URL keeps that setting across a reload
 
 ### Requirement: Squad score
-Suggestions SHALL be ranked by how much they raise a squad score computed from types alone. The score is +1 per defending type the squad's own types hit super-effectively, minus, for each attacking type: 2 per weak member beyond the number that resist or are immune, 1 per member taking 4×, and 6 if it is a problem type.
+Suggestions SHALL be ranked by how much they raise a squad score computed from types alone. The score is a defense part plus an attack part. The attack part is +1 per defending type the squad's own types hit super-effectively. The defense part is minus, for each attacking type: 2 per weak member beyond the number that resist or are immune, 1 per member taking 4×, and 6 if it is a problem type.
 
 #### Scenario: A problem type costs most
 - **WHEN** two candidates differ only in that one resists the squad's problem type
@@ -93,3 +93,18 @@ Suggestions SHALL be recomputed whenever the squad's members or the options chan
 #### Scenario: Problem fixed
 - **WHEN** the player adds a suggested Rock-resisting Pokémon to a four-member squad whose problem type is Rock
 - **THEN** the next suggestions no longer mention fixing Rock
+
+### Requirement: Score breakdown
+Each suggestion, for additions and replacements, SHALL show its score gain split into a defense part and an attack part, each signed ("Defense +18 · Attack +1"; a zero part reads "0"). The two parts SHALL add up to the gain used for ranking.
+
+#### Scenario: Defense-only suggestion
+- **WHEN** Dark/Steel is suggested for the example five-member squad (Charizard, Gyarados, Dragonite, Venusaur, Gengar)
+- **THEN** it shows "Defense +19 · Attack 0"
+
+#### Scenario: Mixed suggestion
+- **WHEN** Fairy/Steel is suggested for the same squad
+- **THEN** it shows "Defense +18 · Attack +1", and it ranks level with Dark/Steel on gain (19)
+
+#### Scenario: Replacement costs show as negative parts
+- **WHEN** a replacement suggestion makes the squad's defense worse
+- **THEN** its defense part is negative, shown with a minus sign

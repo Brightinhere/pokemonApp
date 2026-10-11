@@ -1,5 +1,5 @@
 import type { PokemonType } from '../../data/types'
-import type { Suggestion } from '../../engine'
+import type { ScoreParts, Suggestion } from '../../engine'
 import { capitalize } from '../../ui'
 
 /** "Rock", "Rock and Ice", "Rock, Ice and Water", "Rock, Ice, Water and 2 more". */
@@ -28,3 +28,10 @@ export function reasonSentences(suggestion: Suggestion, replacing: boolean): str
 
 export const effectLabel = (gain: number) =>
   gain > 0 ? 'Improves the squad' : gain === 0 ? 'About the same' : 'Weaker overall'
+
+/** "+19", "0", "−3" (with a real minus sign). */
+const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `\u2212${-n}` : '0')
+
+/** "Defense +19 · Attack 0": the gain split into its two parts. */
+export const breakdownText = ({ defense, attack }: ScoreParts) =>
+  `Defense ${signed(defense)} · Attack ${signed(attack)}`

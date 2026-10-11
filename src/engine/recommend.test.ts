@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import chartJson from '../data/typechart.json'
 import type { PokemonEntry, PokemonType, TypeChart } from '../data/types'
-import { SCORE_WEIGHTS, recommend, scoreSquad } from './recommend'
+import { SCORE_WEIGHTS, recommend, scoreParts, scoreSquad } from './recommend'
 import { createTypeEngine } from './typeEffectiveness'
 
 const engine = createTypeEngine(chartJson as TypeChart)
@@ -68,6 +68,16 @@ describe('scoreSquad', () => {
     const excess = rows.reduce((sum, r) => sum + Math.max(0, r.weak - r.resist - r.immune), 0)
     expect(scoreSquad(engine, [['fighting']])).toBe(covered - excess * 2)
     expect(covered).toBe(5)
+  })
+})
+
+describe('scoreParts', () => {
+  test('the parts add up to scoreSquad, with coverage as attack', () => {
+    const squad = [['fire', 'flying'], ['water'], ['grass', 'poison']] as PokemonType[][]
+    const { defense, attack } = scoreParts(engine, squad)
+    expect(defense + attack).toBe(scoreSquad(engine, squad))
+    expect(attack).toBe(engine.squadCoverage(squad.map((types) => ({ types }))).covered.length)
+    expect(defense).toBeLessThan(0)
   })
 })
 
@@ -152,6 +162,26 @@ describe('recommend', () => {
     })
     expect(swap!.reasons.losesCoverage).toEqual(expect.arrayContaining(['fire', 'ground', 'rock']))
     expect(swap!.reasons.newProblems).toEqual(expect.arrayContaining(['water']))
+  })
+
+  test('breakdown parts add up to the gain for additions and replacements', () => {
+    const pool = [mon(['water']), mon(['steel', 'dark']), mon(['normal']), mon(['ground'])]
+    const squad = [...fireTrio, mon(['grass'])]
+    const all = [
+      ...recommend(engine, { members: fireTrio, pool, limit: 10 }),
+      ...recommend(engine, { members: squad, pool, replaceIndex: 3, limit: 10 }),
+    ]
+    expect(all.length).toBeGreaterThan(3)
+    for (const s of all) expect(s.breakdown.defense + s.breakdown.attack).toBe(s.gain)
+  })
+
+  test('an addition that only adds coverage has a defense part of 0', () => {
+    // Fairy's extra Steel weakness costs 2, and resisting Fighting (both members weak) wins 2 back.
+    const [fairy] = recommend(engine, {
+      members: [mon(['normal']), mon(['rock'])],
+      pool: [mon(['fairy'])],
+    })
+    expect(fairy!.breakdown).toEqual({ defense: 0, attack: 3 })
   })
 
   test('is pure: inputs are untouched and results repeat', () => {

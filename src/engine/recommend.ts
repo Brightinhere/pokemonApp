@@ -28,16 +28,29 @@ const canonical = (types: Iterable<PokemonType>) => {
   return POKEMON_TYPES.filter((type) => set.has(type))
 }
 
+/** A squad's type score in two parts: attack (coverage) and defense (minus penalties). */
+export interface ScoreParts {
+  defense: number
+  attack: number
+}
+
+/** The two parts of a squad's type score. Their sum is `scoreSquad`. */
+export function scoreParts(engine: TypeEngine, squad: readonly TypeSet[]): ScoreParts {
+  const defenders = squad.map((types) => ({ types }))
+  const attack = engine.squadCoverage(defenders).covered.length * SCORE_WEIGHTS.coverage
+  let defense = 0
+  for (const row of engine.squadSummary(defenders)) {
+    defense -= Math.max(0, row.weak - (row.resist + row.immune)) * SCORE_WEIGHTS.weakExcess
+    defense -= row.quadWeak * SCORE_WEIGHTS.quad
+    if (row.isProblem) defense -= SCORE_WEIGHTS.problem
+  }
+  return { defense, attack }
+}
+
 /** A squad's type score: coverage minus defensive penalties. Higher is better. */
 export function scoreSquad(engine: TypeEngine, squad: readonly TypeSet[]): number {
-  const defenders = squad.map((types) => ({ types }))
-  let score = engine.squadCoverage(defenders).covered.length * SCORE_WEIGHTS.coverage
-  for (const row of engine.squadSummary(defenders)) {
-    score -= Math.max(0, row.weak - (row.resist + row.immune)) * SCORE_WEIGHTS.weakExcess
-    score -= row.quadWeak * SCORE_WEIGHTS.quad
-    if (row.isProblem) score -= SCORE_WEIGHTS.problem
-  }
-  return score
+  const { defense, attack } = scoreParts(engine, squad)
+  return defense + attack
 }
 
 export interface SuggestionReasons {
@@ -58,6 +71,8 @@ export interface Suggestion {
   types: PokemonType[]
   /** Score change compared with the current squad. */
   gain: number
+  /** The gain split into its defense and attack parts; they add up to `gain`. */
+  breakdown: ScoreParts
   /** Highest base-stat total in the group (tie-break). */
   bestTotal: number
   /** Every matching entry: highest total first, then dex number, then id. */
@@ -103,7 +118,7 @@ export function recommend(engine: TypeEngine, input: RecommendInput): Suggestion
   const replacing = replaceIndex !== undefined
   const current = members.map((member) => member.types)
   const base = replacing ? current.filter((_, i) => i !== replaceIndex) : current
-  const currentScore = scoreSquad(engine, current)
+  const currentParts = scoreParts(engine, current)
   const excludedSpecies = new Set(members.map((member) => member.speciesId))
 
   const before = {
@@ -125,7 +140,12 @@ export function recommend(engine: TypeEngine, input: RecommendInput): Suggestion
   const suggestions: Suggestion[] = []
   for (const { types, entries } of groups.values()) {
     const after = [...base, types]
-    const gain = scoreSquad(engine, after) - currentScore
+    const parts = scoreParts(engine, after)
+    const breakdown = {
+      defense: parts.defense - currentParts.defense,
+      attack: parts.attack - currentParts.attack,
+    }
+    const gain = breakdown.defense + breakdown.attack
     if (!replacing && gain <= 0) continue
 
     const afterProblems = problemsOf(engine, after)
@@ -134,6 +154,7 @@ export function recommend(engine: TypeEngine, input: RecommendInput): Suggestion
     suggestions.push({
       types,
       gain,
+      breakdown,
       bestTotal: total(entries[0]!),
       entries,
       reasons: {

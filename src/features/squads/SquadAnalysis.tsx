@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, type CSSProperties, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { typeChart } from '../../data/typeChart'
 import { typeEngine } from '../../data/typeEngine'
@@ -165,39 +165,97 @@ function Legend() {
   )
 }
 
+function TypeChips({ label, types }: { label: string; types: readonly PokemonType[] }) {
+  return (
+    <ul aria-label={label} className="flex flex-wrap gap-1">
+      {types.map((type) => (
+        <li key={type}>
+          <TypeChip type={type} />
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function CoverageBlock({ title, children }: { title: string; children: [ReactNode, ReactNode] }) {
+  return (
+    <div>
+      <h3 className="mb-3 text-sm font-bold tracking-wide text-ink-soft uppercase">{title}</h3>
+      <div className="grid gap-6 md:grid-cols-2 md:gap-10">{children}</div>
+    </div>
+  )
+}
+
+function CoverageList({
+  heading,
+  intro,
+  children,
+}: {
+  heading: string
+  intro: string
+  children: ReactNode
+}) {
+  return (
+    <div>
+      <h4 className="mb-2 text-lg font-bold font-stretch-expanded">{heading}</h4>
+      <p className="mb-3 max-w-[56ch] text-ink-soft">{intro}</p>
+      {children}
+    </div>
+  )
+}
+
 function Coverage({ members }: { members: PokemonEntry[] }) {
   const { covered, uncovered } = typeEngine.squadCoverage(members)
+  const summary = typeEngine.squadSummary(members)
+  const resisted = summary.filter((row) => row.resist + row.immune > 0)
+  const notResisted = summary.filter((row) => row.resist + row.immune === 0)
   return (
-    <section aria-labelledby="coverage-title" className="mt-12 grid gap-10 md:grid-cols-2">
-      <div>
-        <h2 id="coverage-title" className="mb-3 text-lg font-bold font-stretch-expanded">
-          Attack coverage
-        </h2>
-        <p className="mb-3 max-w-[56ch] text-ink-soft">
-          Types this squad hits super-effectively with its own types:
-        </p>
-        <ul aria-label="Covered types" className="flex flex-wrap gap-1">
-          {covered.map((type) => (
-            <li key={type}>
-              <TypeChip type={type} />
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h2 className="mb-3 text-lg font-bold font-stretch-expanded">Not covered</h2>
-        <p className="mb-3 max-w-[56ch] text-ink-soft">
-          No member&apos;s own type hits these super-effectively. A member of a type that does would
-          close the gap.
-        </p>
-        <ul aria-label="Uncovered types" className="flex flex-wrap gap-1">
-          {uncovered.map((type) => (
-            <li key={type}>
-              <TypeChip type={type} />
-            </li>
-          ))}
-        </ul>
-      </div>
+    <section aria-labelledby="coverage-title" className="mt-12 grid gap-10">
+      <h2 id="coverage-title" className="-mb-6 text-xl font-extrabold font-stretch-expanded">
+        Coverage
+      </h2>
+      <CoverageBlock title="Attack">
+        <CoverageList
+          heading="Covered"
+          intro="Types this squad hits super-effectively with its own types."
+        >
+          <TypeChips label="Covered types" types={covered} />
+        </CoverageList>
+        <CoverageList
+          heading="Not covered"
+          intro="No member's own type hits these super-effectively. A member of a type that does would close the gap."
+        >
+          <TypeChips label="Uncovered types" types={uncovered} />
+        </CoverageList>
+      </CoverageBlock>
+      <CoverageBlock title="Defense">
+        <CoverageList
+          heading="Resisted"
+          intro="Attacking types at least one member resists or is immune to."
+        >
+          <TypeChips label="Resisted types" types={resisted.map((row) => row.attackingType)} />
+        </CoverageList>
+        <CoverageList
+          heading="Not resisted"
+          intro="No member resists these. The count shows how many members take super-effective damage."
+        >
+          <ul aria-label="Not resisted types" className="flex flex-wrap gap-x-3 gap-y-1">
+            {notResisted.map((row) => (
+              <li key={row.attackingType} className="flex items-center gap-1.5">
+                <TypeChip type={row.attackingType} />
+                {row.weak > 0 && (
+                  <span className="text-sm text-ink-soft">
+                    <span aria-hidden="true">{row.weak} weak</span>
+                    <span className="sr-only">
+                      , {row.weak} {row.weak === 1 ? 'member' : 'members'} weak
+                    </span>
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </CoverageList>
+      </CoverageBlock>
     </section>
   )
 }

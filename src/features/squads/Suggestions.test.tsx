@@ -37,6 +37,7 @@ describe('Complete your squad', () => {
     const first = cards('Suggestions')[0]!
     expect(first.querySelector('h3')).toHaveAttribute('aria-label', 'Steel/Dark')
     expect(within(first).getByText('Fixes the Rock problem.')).toBeInTheDocument()
+    expect(within(first).getByText('Defense +19 · Attack 0')).toBeInTheDocument()
     const pokemon = within(
       within(first).getByRole('list', { name: 'Steel/Dark Pokémon' }),
     ).getAllByRole('link')

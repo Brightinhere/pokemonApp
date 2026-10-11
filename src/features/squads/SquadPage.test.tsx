@@ -155,6 +155,54 @@ describe('squad page: analysis', () => {
     ).toHaveLength(13)
   })
 
+  test('defense coverage lists resisted and not resisted types, with weak counts', async () => {
+    renderApp('/squads/k', { squads: squads(example) })
+    const resisted = within(await screen.findByRole('list', { name: 'Resisted types' }))
+    expect(resisted.getAllByRole('listitem').map((li) => li.textContent)).toEqual([
+      'Normal',
+      'Fighting',
+      'Poison',
+      'Ground',
+      'Bug',
+      'Steel',
+      'Fire',
+      'Water',
+      'Grass',
+      'Electric',
+      'Fairy',
+    ])
+    const notResisted = within(screen.getByRole('list', { name: 'Not resisted types' }))
+    const items = notResisted.getAllByRole('listitem')
+    expect(items.map((li) => li.firstChild!.textContent)).toEqual([
+      'Flying',
+      'Rock',
+      'Ghost',
+      'Psychic',
+      'Ice',
+      'Dragon',
+      'Dark',
+    ])
+    const rock = items[1]!
+    expect(rock).toHaveTextContent('3 weak')
+    expect(rock).toHaveTextContent('3 members weak')
+    expect(items[3]).toHaveTextContent('2 weak')
+    expect(items[4]).toHaveTextContent('2 weak')
+  })
+
+  test('adding a Steel member moves Rock to resisted', async () => {
+    const { store } = renderApp('/squads/k', { squads: squads(example) })
+    await screen.findByRole('list', { name: 'Resisted types' })
+    act(() => {
+      store.dispatch(addMember({ entryId: 376 })) // Metagross: Steel/Psychic
+    })
+    expect(
+      within(screen.getByRole('list', { name: 'Resisted types' })).getByText('Rock'),
+    ).toBeInTheDocument()
+    expect(
+      within(screen.getByRole('list', { name: 'Not resisted types' })).queryByText('Rock'),
+    ).not.toBeInTheDocument()
+  })
+
   test('adding a Steel member clears the Rock problem', async () => {
     const { store } = renderApp('/squads/k', { squads: squads(example) })
     await screen.findByRole('heading', { name: /Rock hits 3/ })
